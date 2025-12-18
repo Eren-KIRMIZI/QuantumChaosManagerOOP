@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuantum Ambari Kontrol Paneli</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+            color: #00ff41;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #16213e 0%, #0f3443 100%);
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #00ff41;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: #00ff41;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #00d9ff;
+            font-size: 14px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+        }
+
+        .control-panel {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #4ecdc4;
+            height: fit-content;
+        }
+
+        .control-panel h2 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 18px;
+            border-bottom: 2px solid #ff6b6b;
+            padding-bottom: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: bold;
+            border: 2px solid;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-add {
+            background: #4ecdc4;
+            color: #0f3443;
+            border-color: #4ecdc4;
+        }
+
+        .btn-add:hover {
+            background: #3db8af;
+        }
+
+        .btn-list {
+            background: #95e1d3;
+            color: #0f3443;
+            border-color: #95e1d3;
+        }
+
+        .btn-list:hover {
+            background: #7dcfc2;
+        }
+
+        .btn-analyze {
+            background: #f38181;
+            color: #0f3443;
+            border-color: #f38181;
+        }
+
+        .btn-analyze:hover {
+            background: #e66a6a;
+        }
+
+        .btn-cool {
+            background: #aa96da;
+            color: #0f3443;
+            border-color: #aa96da;
+        }
+
+        .btn-cool:hover {
+            background: #9682c9;
+        }
+
+        .btn-exit {
+            background: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        .btn-exit:hover {
+            background: #e85555;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            color: #00d9ff;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            background: #0f3443;
+            border: 2px solid #00ff41;
+            border-radius: 5px;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #00d9ff;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .log-panel {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ffb400;
+            flex: 1;
+        }
+
+        .log-panel h2 {
+            color: #ffb400;
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-bottom: 2px solid #ffb400;
+            padding-bottom: 10px;
+        }
+
+        .log-content {
+            background: #0f3443;
+            padding: 15px;
+            border-radius: 5px;
+            height: 500px;
+            overflow-y: auto;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .log-content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .log-content::-webkit-scrollbar-track {
+            background: #16213e;
+        }
+
+        .log-content::-webkit-scrollbar-thumb {
+            background: #00ff41;
+            border-radius: 5px;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 5px;
+            border-left: 3px solid #00ff41;
+            padding-left: 10px;
+        }
+
+        .log-error {
+            color: #ff6b6b;
+            border-left-color: #ff6b6b;
+        }
+
+        .log-warning {
+            color: #ffb400;
+            border-left-color: #ffb400;
+        }
+
+        .log-success {
+            color: #4ecdc4;
+            border-left-color: #4ecdc4;
+        }
+
+        .status-bar {
+            background: #0f3443;
+            padding: 15px;
+            border-radius: 5px;
+            border: 2px solid #00d9ff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .status-label {
+            color: #00d9ff;
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .status-value {
+            color: #00ff41;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .inventory-grid {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #95e1d3;
+            display: none;
+        }
+
+        .inventory-grid.active {
+            display: block;
+        }
+
+        .inventory-grid h2 {
+            color: #95e1d3;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .inventory-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .item-card {
+            background: #0f3443;
+            padding: 15px;
+            border-radius: 5px;
+            border: 2px solid;
+            transition: all 0.3s;
+        }
+
+        .item-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .item-card.veri {
+            border-color: #4ecdc4;
+        }
+
+        .item-card.karanlik {
+            border-color: #f38181;
+        }
+
+        .item-card.anti {
+            border-color: #ff6b6b;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .item-id {
+            color: #00ff41;
+        }
+
+        .item-type {
+            color: #00d9ff;
+            font-size: 11px;
+        }
+
+        .item-kritik {
+            color: #ff6b6b;
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
+        .stability-bar {
+            margin: 10px 0;
+        }
+
+        .stability-label {
+            color: #00d9ff;
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .stability-progress {
+            width: 100%;
+            height: 20px;
+            background: #16213e;
+            border-radius: 3px;
+            overflow: hidden;
+            border: 1px solid #00ff41;
+        }
+
+        .stability-fill {
+            height: 100%;
+            transition: width 0.5s, background 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .stability-high {
+            background: linear-gradient(90deg, #4ecdc4, #95e1d3);
+            color: #0f3443;
+        }
+
+        .stability-medium {
+            background: linear-gradient(90deg, #ffb400, #ffd93d);
+            color: #0f3443;
+        }
+
+        .stability-low {
+            background: linear-gradient(90deg, #ff6b6b, #f38181);
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #16213e;
+            padding: 30px;
+            border-radius: 10px;
+            border: 3px solid #ff6b6b;
+            text-align: center;
+            max-width: 500px;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+
+        .modal-title {
+            font-size: 32px;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+        }
+
+        .modal-message {
+            font-size: 18px;
+            color: #00ff41;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>KUANTUM AMBARI KONTROL PANELI</h1>
+            <p>Omega Sektoru - Vardiya Kontrol Sistemi</p>
+        </div>
+
+        <div class="main-content">
+            <div class="control-panel">
+                <h2>KONTROL MERKEZI</h2>
+                
+                <div class="button-group">
+                    <button class="btn-add" onclick="yeniNesneEkle()">Yeni Nesne Ekle</button>
+                    <button class="btn-list" onclick="toggleInventory()">Envanteri Goster/Gizle</button>
+                </div>
+
+                <div class="input-group">
+                    <label>Nesne ID Giriniz:</label>
+                    <input type="text" id="nesneId" placeholder="Ornek: QN-A1B2C3">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-analyze" onclick="nesneAnaliz()">Nesneyi Analiz Et</button>
+                    <button class="btn-cool" onclick="acilSogutma()">Acil Durum Sogutmasi</button>
+                    <button class="btn-exit" onclick="guvenliCikis()">Guvenli Cikis</button>
+                </div>
+
+                <div class="status-bar" style="margin-top: 20px;">
+                    <div class="status-item">
+                        <span class="status-label">TOPLAM</span>
+                        <span class="status-value" id="toplamNesne">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">KRITIK</span>
+                        <span class="status-value" id="kritikNesne">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">DURUM</span>
+                        <span class="status-value" style="color: #4ecdc4;">AKTIF</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="inventory-grid" id="inventoryPanel">
+                    <h2>ENVANTER LISTESI</h2>
+                    <div class="inventory-items" id="inventoryItems"></div>
+                </div>
+
+                <div class="log-panel">
+                    <h2>SISTEM LOGU</h2>
+                    <div class="log-content" id="logContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="crashModal">
+        <div class="modal-content">
+            <div class="modal-title">SISTEM COKTU!</div>
+            <div class="modal-message" id="crashMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        // ===============================
+        // OOP Kodlari
+        // ===============================
+        class KuantumCokusuException extends Error {
+            constructor(id) {
+                super(`KUANTUM COKUSU! Nesne patladi: ${id}`);
+                this.name = "KuantumCokusuException";
+                this.nesneId = id;
+            }
+        }
+
+        class KuantumNesnesi {
+            constructor(id, stabilite, tehlikeSeviyesi) {
+                if (new.target === KuantumNesnesi) {
+                    throw new Error("KuantumNesnesi soyut siniftir!");
+                }
+                this._id = id;
+                this._stabilite = 0;
+                this._tehlikeSeviyesi = 0;
+                this.stabilite = stabilite;
+                this.tehlikeSeviyesi = tehlikeSeviyesi;
+            }
+
+            get id() { return this._id; }
+
+            get stabilite() { return this._stabilite; }
+            set stabilite(value) {
+                if (typeof value !== 'number' || isNaN(value)) {
+                    throw new Error("Stabilite sayisal deger olmalidir!");
+                }
+                this._stabilite = Math.max(0, Math.min(100, value));
+            }
+
+            get tehlikeSeviyesi() { return this._tehlikeSeviyesi; }
+            set tehlikeSeviyesi(value) {
+                if (typeof value !== 'number' || value < 1 || value > 10) {
+                    throw new Error("TehlikeSeviyesi 1-10 arasi olmalidir!");
+                }
+                this._tehlikeSeviyesi = Math.floor(value);
+            }
+
+            analizEt() {
+                throw new Error("analizEt() metodu override edilmelidir!");
+            }
+
+            durumBilgisi() {
+                return `ID: ${this.id} | Stabilite: ${this.stabilite.toFixed(1)} | Tehlike: ${this.tehlikeSeviyesi}`;
+            }
+
+            _stabiliteKontrol() {
+                if (this.stabilite <= 0) {
+                    throw new KuantumCokusuException(this.id);
+                }
+            }
+        }
+
+        const IKritik = Base => class extends Base {
+            acilDurumSogutmasi() {
+                this.stabilite += 50;
+                return `Sogutma uygulandi: ${this.stabilite.toFixed(1)}`;
+            }
+            get isKritik() { return true; }
+        };
+
+        class VeriPaketi extends KuantumNesnesi {
+            analizEt() {
+                this.stabilite -= 5;
+                this._stabiliteKontrol();
+                return "Veri icerigi okundu.";
+            }
+            get isKritik() { return false; }
+            get tipAdi() { return "VeriPaketi"; }
+        }
+
+        class KaranlikMadde extends IKritik(KuantumNesnesi) {
+            analizEt() {
+                this.stabilite -= 15;
+                this._stabiliteKontrol();
+                return "Karanlik madde analiz ediliyor...";
+            }
+            get tipAdi() { return "KaranlikMadde"; }
+        }
+
+        class AntiMadde extends IKritik(KuantumNesnesi) {
+            analizEt() {
+                this.stabilite -= 25;
+                this._stabiliteKontrol();
+                return "EVRENIN DOKUSU TITRIYOR...";
+            }
+            get tipAdi() { return "AntiMadde"; }
+        }
+
+        // ===============================
+        // Uygulama
+        // ===============================
+        let envanter = [];
+
+        function rastgeleID() {
+            return "QN-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        function rastgeleNesneUret() {
+            const tipler = [VeriPaketi, KaranlikMadde, AntiMadde];
+            const TipClass = tipler[Math.floor(Math.random() * tipler.length)];
+            const stabilite = Math.floor(Math.random() * 40) + 60;
+            const tehlike = Math.floor(Math.random() * 10) + 1;
+            return new TipClass(rastgeleID(), stabilite, tehlike);
+        }
+
+        function logMesaj(mesaj, tip = 'normal') {
+            const logContent = document.getElementById('logContent');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            if (tip === 'error') entry.classList.add('log-error');
+            if (tip === 'warning') entry.classList.add('log-warning');
+            if (tip === 'success') entry.classList.add('log-success');
+            
+            const zaman = new Date().toLocaleTimeString('tr-TR');
+            entry.textContent = `[${zaman}] ${mesaj}`;
+            logContent.appendChild(entry);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        function guncelleIstatistik() {
+            const toplam = envanter.length;
+            const kritik = envanter.filter(n => n.isKritik).length;
+            document.getElementById('toplamNesne').textContent = toplam;
+            document.getElementById('kritikNesne').textContent = kritik;
+        }
+
+        function yeniNesneEkle() {
+            try {
+                const nesne = rastgeleNesneUret();
+                envanter.push(nesne);
+                logMesaj(`Yeni nesne eklendi: ${nesne.durumBilgisi()} [${nesne.tipAdi}]`, 'success');
+                guncelleIstatistik();
+                guncelleInventory();
+            } catch (e) {
+                logMesaj(`Hata: ${e.message}`, 'error');
+            }
+        }
+
+        function toggleInventory() {
+            const panel = document.getElementById('inventoryPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) {
+                guncelleInventory();
+            }
+        }
+
+        function guncelleInventory() {
+            const container = document.getElementById('inventoryItems');
+            container.innerHTML = '';
+
+            if (envanter.length === 0) {
+                container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #00d9ff; padding: 20px;">Envanter bos.</div>';
+                return;
+            }
+
+            envanter.forEach(nesne => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                
+                if (nesne.tipAdi === 'VeriPaketi') card.classList.add('veri');
+                if (nesne.tipAdi === 'KaranlikMadde') card.classList.add('karanlik');
+                if (nesne.tipAdi === 'AntiMadde') card.classList.add('anti');
+
+                const stabilite = nesne.stabilite;
+                let stabilityClass = 'stability-high';
+                if (stabilite < 30) stabilityClass = 'stability-low';
+                else if (stabilite < 60) stabilityClass = 'stability-medium';
+
+                card.innerHTML = `
+                    <div class="item-header">
+                        <span class="item-id">${nesne.id}</span>
+                        <span class="item-type">${nesne.tipAdi}</span>
+                    </div>
+                    <div class="stability-bar">
+                        <div class="stability-label">Stabilite: ${stabilite.toFixed(1)}%</div>
+                        <div class="stability-progress">
+                            <div class="stability-fill ${stabilityClass}" style="width: ${stabilite}%">
+                                ${stabilite.toFixed(0)}%
+                            </div>
+                        </div>
+                    </div>
+                    <div style="color: #00d9ff; font-size: 11px; margin-top: 5px;">
+                        Tehlike Seviyesi: ${nesne.tehlikeSeviyesi}/10
+                    </div>
+                    ${nesne.isKritik ? '<div class="item-kritik">[KRITIK MADDE]</div>' : ''}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function nesneAnaliz() {
+            try {
+                const id = document.getElementById('nesneId').value.trim();
+                if (!id) {
+                    logMesaj('Lutfen bir ID giriniz!', 'warning');
+                    return;
+                }
+
+                const nesne = envanter.find(n => n.id === id);
+                if (!nesne) {
+                    logMesaj(`Nesne bulunamadi: ${id}`, 'error');
+                    return;
+                }
+
+                const mesaj = nesne.analizEt();
+                logMesaj(`Analiz: ${mesaj}`, 'success');
+                logMesaj(`${nesne.durumBilgisi()}`);
+                
+                if (nesne.stabilite < 30) {
+                    logMesaj(`UYARI: ${id} kritik stabilite seviyesinde!`, 'warning');
+                }
+
+                guncelleInventory();
+            } catch (e) {
+                if (e instanceof KuantumCokusuException) {
+                    sistemCoktu(e.message);
+                } else {
+                    logMesaj(`Hata: ${e.message}`, 'error');
+                }
+            }
+        }
+
+        function acilSogutma() {
+            try {
+                const id = document.getElementById('nesneId').value.trim();
+                if (!id) {
+                    logMesaj('Lutfen bir ID giriniz!', 'warning');
+                    return;
+                }
+
+                const nesne = envanter.find(n => n.id === id);
+                if (!nesne) {
+                    logMesaj(`Nesne bulunamadi: ${id}`, 'error');
+                    return;
+                }
+
+                if (nesne.isKritik && typeof nesne.acilDurumSogutmasi === 'function') {
+                    const mesaj = nesne.acilDurumSogutmasi();
+                    logMesaj(`Acil sogutma: ${mesaj}`, 'success');
+                    logMesaj(`${nesne.durumBilgisi()}`);
+                    guncelleInventory();
+                } else {
+                    logMesaj(`Bu nesne sogutulamaz! (IKritik degil)`, 'warning');
+                }
+            } catch (e) {
+                logMesaj(`Hata: ${e.message}`, 'error');
+            }
+        }
+
+        function sistemCoktu(mesaj) {
+            document.getElementById('crashMessage').innerHTML = `
+                TAHLIYE BASLATILIYOR...<br><br>
+                ${mesaj}<br><br>
+                Sistem 3 saniye icinde kapanacak...
+            `;
+            document.getElementById('crashModal').classList.add('active');
+            
+            setTimeout(() => {
+                window.close();
+            }, 3000);
+        }
+
+        function guvenliCikis() {
+            if (confirm('Guvenli cikis yapmak istiyor musunuz?')) {
+                logMesaj('Guvenli cikis yapiliyor...', 'success');
+                setTimeout(() => window.close(), 1000);
+            }
+        }
+
+        // Baslangic logu
+        logMesaj('Sistem baslatildi. Kuantum Ambari hazir!', 'success');
+    </script>
+</body>
+</html>
